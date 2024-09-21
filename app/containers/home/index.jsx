@@ -1,22 +1,33 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Checkbox, Form, Message } from 'semantic-ui-react';
+import { Input, Button, Checkbox, Form, message, Radio, Slider } from 'antd';
+import { ReloadOutlined, CopyOutlined } from '@ant-design/icons';
+
+const KEYBOARD_LAYOUT = [
+  { key: 'qwerty', text: 'QWERTY', value: 'qwerty' },
+  { key: 'azerty', text: 'AZERTY', value: 'azerty' },
+  { key: 'qwertz', text: 'QWERTZ', value: 'qwertz' },
+  { key: 'dvorak', text: 'Dvorak', value: 'dvorak' },
+  { key: 'colemak', text: 'Colemak', value: 'colemak' },
+  { key: 'alphabetic', text: 'Alphabetic', value: 'alphabetic' },
+];
 
 const PasswordGenerator = () => {
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const [includeLetters, setIncludeLetters] = useState(true);
   const [includeMixedCase, setIncludeMixedCase] = useState(false);
   const [includePunctuation, setIncludePunctuation] = useState(false);
   const [includeNumbers, setIncludeNumbers] = useState(false);
   const [passwordLength, setPasswordLength] = useState(12);
-  const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState('');
+  const [keyboardLayout, setKeyboardLayout] = useState('qwerty');
 
   const refreshPassword = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/password', {
+      const response = await fetch('/api/password/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,17 +38,18 @@ const PasswordGenerator = () => {
           includePunctuation,
           includeNumbers,
           passwordLength,
+          keyboardLayout,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to generate password');
       }
-  
+
       const data = await response.json();
       setPassword(data.password);
     } catch (error) {
-      setNotification('Error: ' + error.message);
+      message.error('Error: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -45,95 +57,122 @@ const PasswordGenerator = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(password);
-    setNotification('Password copied to clipboard!');
-    setTimeout(() => setNotification(''), 3000); // Clear notification after 3 seconds
+    message.success('Password copied to clipboard!');
   };
 
   useEffect(() => {
     refreshPassword();
-  }, []);
-  
+  }, [includeLetters, includeMixedCase, includePunctuation, includeNumbers, passwordLength, keyboardLayout]);
+
+  const handleKeyboardLayoutChange = (e) => {
+    setKeyboardLayout(e.target.value);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 relative">
-      {notification && (
-        <div className="absolute top-0 left-0 right-0 p-4">
-          <Message
-            positive={notification.startsWith('Password copied')}
-            negative={notification.startsWith('Error')}
-            onDismiss={() => setNotification('')}
-          >
-            {notification}
-          </Message>
-        </div>
-      )}
-      <div className="w-full max-w-md md:max-w-lg lg:max-w-xl p-8 bg-white rounded shadow-md">
-        <div className="w-full mb-4 flex items-center">
+      <div className="w-full max-w-2xl p-12 bg-white rounded shadow-md">
+        <div className="w-full mb-6 flex items-center">
           <Input
+            size="large"
             placeholder="Generated password..."
             value={password}
-            action={{
-              color: 'teal',
-              icon: 'refresh',
-              onClick: refreshPassword,
-              loading: loading,
-              disabled: loading
-            }}
+            addonAfter={
+              <ReloadOutlined
+                size="large"
+                loading={loading}
+                disabled={loading}
+                onClick={refreshPassword}
+              />
+            }
             className="flex-grow"
-            loading={loading}
             disabled={loading}
           />
-          <div className="ml-2 hidden md:block">
-            <Button onClick={copyToClipboard} disabled={loading}>
+          <div className="ml-4 hidden md:block">
+            <Button
+              size="large"
+              onClick={copyToClipboard}
+              disabled={loading}
+              icon={<CopyOutlined />}
+            >
               Copy to Clipboard
             </Button>
           </div>
-          <div className="ml-2 md:hidden">
-            <Button icon="copy" onClick={copyToClipboard} disabled={loading} />
+          <div className="ml-4 md:hidden">
+            <Button
+              size="large"
+              icon={<CopyOutlined />}
+              onClick={copyToClipboard}
+              disabled={loading}
+            />
           </div>
         </div>
-        <Form>
-          <Form.Field>
+        <Form layout="vertical">
+          <Form.Item>
             <Checkbox
-              label="Include Letters"
               checked={includeLetters}
-              onChange={(e, { checked }) => setIncludeLetters(checked)}
+              onChange={(e) => setIncludeLetters(e.target.checked)}
               disabled={loading}
-            />
-          </Form.Field>
-          <Form.Field>
+              size="large"
+            >
+              Include Letters
+            </Checkbox>
+          </Form.Item>
+          <Form.Item>
             <Checkbox
-              label="Include Mixed Case"
               checked={includeMixedCase}
-              onChange={(e, { checked }) => setIncludeMixedCase(checked)}
+              onChange={(e) => setIncludeMixedCase(e.target.checked)}
               disabled={loading}
-            />
-          </Form.Field>
-          <Form.Field>
+              size="large"
+            >
+              Include Mixed Case
+            </Checkbox>
+          </Form.Item>
+          <Form.Item>
             <Checkbox
-              label="Include Punctuation"
               checked={includePunctuation}
-              onChange={(e, { checked }) => setIncludePunctuation(checked)}
+              onChange={(e) => setIncludePunctuation(e.target.checked)}
               disabled={loading}
-            />
-          </Form.Field>
-          <Form.Field>
+              size="large"
+            >
+              Include Punctuation
+            </Checkbox>
+          </Form.Item>
+          <Form.Item>
             <Checkbox
-              label="Include Numbers"
               checked={includeNumbers}
-              onChange={(e, { checked }) => setIncludeNumbers(checked)}
+              onChange={(e) => setIncludeNumbers(e.target.checked)}
               disabled={loading}
-            />
-          </Form.Field>
-          <Form.Field>
-            <label>Length:</label>
-            <Input
-              type="number"
+              size="large"
+            >
+              Include Numbers
+            </Checkbox>
+          </Form.Item>
+          <Form.Item label={`Length: ${passwordLength}`}>
+            <Slider
+              min={4}
+              max={32}
               value={passwordLength}
-              onChange={(e) => setPasswordLength(e.target.value)}
+              onChange={(value) => setPasswordLength(value)}
               className="ml-2"
+              size="large"
               disabled={loading}
             />
-          </Form.Field>
+          </Form.Item>
+          <Form.Item label="Keyboard Layout:">
+            <Radio.Group
+              onChange={handleKeyboardLayoutChange}
+              value={keyboardLayout}
+              disabled={loading}
+              className="large-radio-group"
+              size="large"
+            >
+              {KEYBOARD_LAYOUT.map((layout) => (
+                <Radio key={layout.key} value={layout.value} className="large-radio">
+                  {layout.text}
+                </Radio>
+              ))}
+            </Radio.Group>
+          </Form.Item>
         </Form>
       </div>
     </div>
