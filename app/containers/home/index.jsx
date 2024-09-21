@@ -5,12 +5,8 @@ import { Input, Button, Switch, Form, message, Radio, Slider } from 'antd';
 import { ReloadOutlined, CopyOutlined } from '@ant-design/icons';
 
 const KEYBOARD_LAYOUT = [
-  { key: 'qwerty', text: 'QWERTY', value: 'qwerty' },
-  { key: 'alphabetic', text: 'Alphabetic', value: 'alphabetic' },
-  { key: 'azerty', text: 'AZERTY', value: 'azerty' },
-  { key: 'qwertz', text: 'QWERTZ', value: 'qwertz' },
-  { key: 'dvorak', text: 'Dvorak', value: 'dvorak' },
-  { key: 'colemak', text: 'Colemak', value: 'colemak' },
+  { key: 'qwerty', label: 'QWERTY', value: 'qwerty' },
+  { key: 'alphabetic', label: 'Alphabetic', value: 'alphabetic' }
 ];
 
 const PasswordGenerator = () => {
@@ -174,7 +170,7 @@ const PasswordGenerator = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {KEYBOARD_LAYOUT.map((layout) => (
                   <Radio key={layout.key} value={layout.value} className="large-radio">
-                    {layout.text}
+                    {layout.label}
                   </Radio>
                 ))}
               </div>
