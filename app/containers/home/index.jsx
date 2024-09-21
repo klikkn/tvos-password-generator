@@ -1,16 +1,16 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Checkbox, Form, message, Radio, Slider } from 'antd';
+import { Input, Button, Switch, Form, message, Radio, Slider } from 'antd';
 import { ReloadOutlined, CopyOutlined } from '@ant-design/icons';
 
 const KEYBOARD_LAYOUT = [
   { key: 'qwerty', text: 'QWERTY', value: 'qwerty' },
+  { key: 'alphabetic', text: 'Alphabetic', value: 'alphabetic' },
   { key: 'azerty', text: 'AZERTY', value: 'azerty' },
   { key: 'qwertz', text: 'QWERTZ', value: 'qwertz' },
   { key: 'dvorak', text: 'Dvorak', value: 'dvorak' },
   { key: 'colemak', text: 'Colemak', value: 'colemak' },
-  { key: 'alphabetic', text: 'Alphabetic', value: 'alphabetic' },
 ];
 
 const PasswordGenerator = () => {
@@ -71,6 +71,7 @@ const PasswordGenerator = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 relative">
       <div className="w-full max-w-2xl p-12 bg-white rounded shadow-md">
+        <h1 className="text-2xl font-bold mb-6">Password Generator</h1>
         <div className="w-full mb-6 flex items-center">
           <Input
             size="large"
@@ -107,46 +108,6 @@ const PasswordGenerator = () => {
           </div>
         </div>
         <Form layout="vertical">
-          <Form.Item>
-            <Checkbox
-              checked={includeLetters}
-              onChange={(e) => setIncludeLetters(e.target.checked)}
-              disabled={loading}
-              size="large"
-            >
-              Include Letters
-            </Checkbox>
-          </Form.Item>
-          <Form.Item>
-            <Checkbox
-              checked={includeMixedCase}
-              onChange={(e) => setIncludeMixedCase(e.target.checked)}
-              disabled={loading}
-              size="large"
-            >
-              Include Mixed Case
-            </Checkbox>
-          </Form.Item>
-          <Form.Item>
-            <Checkbox
-              checked={includePunctuation}
-              onChange={(e) => setIncludePunctuation(e.target.checked)}
-              disabled={loading}
-              size="large"
-            >
-              Include Punctuation
-            </Checkbox>
-          </Form.Item>
-          <Form.Item>
-            <Checkbox
-              checked={includeNumbers}
-              onChange={(e) => setIncludeNumbers(e.target.checked)}
-              disabled={loading}
-              size="large"
-            >
-              Include Numbers
-            </Checkbox>
-          </Form.Item>
           <Form.Item label={`Length: ${passwordLength}`}>
             <Slider
               min={4}
@@ -158,6 +119,50 @@ const PasswordGenerator = () => {
               disabled={loading}
             />
           </Form.Item>
+          <Form.Item>
+            <div className="flex items-center justify-between">
+              <label>Include Letters</label>
+              <Switch
+                checked={includeLetters}
+                onChange={(checked) => setIncludeLetters(checked)}
+                disabled={loading}
+                size="large"
+              />
+            </div>
+          </Form.Item>
+          <Form.Item>
+            <div className="flex items-center justify-between">
+              <label>Include Mixed Case</label>
+              <Switch
+                checked={includeMixedCase}
+                onChange={(checked) => setIncludeMixedCase(checked)}
+                disabled={loading}
+                size="large"
+              />
+            </div>
+          </Form.Item>
+          <Form.Item>
+            <div className="flex items-center justify-between">
+              <label>Include Punctuation</label>
+              <Switch
+                checked={includePunctuation}
+                onChange={(checked) => setIncludePunctuation(checked)}
+                disabled={loading}
+                size="large"
+              />
+            </div>
+          </Form.Item>
+          <Form.Item>
+            <div className="flex items-center justify-between">
+              <label>Include Numbers</label>
+              <Switch
+                checked={includeNumbers}
+                onChange={(checked) => setIncludeNumbers(checked)}
+                disabled={loading}
+                size="large"
+              />
+            </div>
+          </Form.Item>
           <Form.Item label="Keyboard Layout:">
             <Radio.Group
               onChange={handleKeyboardLayoutChange}
@@ -166,11 +171,13 @@ const PasswordGenerator = () => {
               className="large-radio-group"
               size="large"
             >
-              {KEYBOARD_LAYOUT.map((layout) => (
-                <Radio key={layout.key} value={layout.value} className="large-radio">
-                  {layout.text}
-                </Radio>
-              ))}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {KEYBOARD_LAYOUT.map((layout) => (
+                  <Radio key={layout.key} value={layout.value} className="large-radio">
+                    {layout.text}
+                  </Radio>
+                ))}
+              </div>
             </Radio.Group>
           </Form.Item>
         </Form>
