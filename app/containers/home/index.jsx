@@ -10,6 +10,7 @@ const KEYBOARD_LAYOUT = [
 ];
 
 const PasswordGenerator = () => {
+
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -23,6 +24,7 @@ const PasswordGenerator = () => {
   const refreshPassword = async () => {
     setLoading(true);
     try {
+
       const response = await fetch('/api/password/generate', {
         method: 'POST',
         headers: {
